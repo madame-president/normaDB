@@ -16,7 +16,7 @@ PRICE_STORAGE = st.secrets["PRICE_STORAGE"]
 
 
 # -----------------------------
-# DATABASE INIT
+# PART 1: INITIALIZATION OF DATABASES
 # -----------------------------
 def initializeDatabases():
     """Create necessary tables if they don't exist."""
@@ -41,7 +41,7 @@ def initializeDatabases():
 
 
 # -----------------------------
-# TRANSACTIONS FUNCTIONS
+# PART 2: FUNCTIONS RELATED TO TRANSACTIONS
 # -----------------------------
 def getSeenTransactions():
     with sqlite3.connect(TX_STORAGE) as conn:
@@ -58,7 +58,7 @@ def getNewTransactions(seenTransactions):
 
 def parseTransactions(newTransactions):
     parsed = []
-    satBtc = 100_000_000
+    satBtc = 1e8
 
     for tx in newTransactions:
         txid = tx["txid"]
@@ -69,21 +69,18 @@ def parseTransactions(newTransactions):
         if not blockHeight or not blockTime:
             continue
 
-        # Calculate total received deposits
         totalReceivedSats = sum(
             vout["value"]
             for vout in tx.get("vout", [])
             if vout.get("scriptpubkey_address") == FUND_ADDRESS
         )
 
-        # Calculate total spent withdrawals
         totalSpentSats = 0
         for vin in tx.get("vin", []):
             prevout = vin.get("prevout")
             if prevout and prevout.get("scriptpubkey_address") == FUND_ADDRESS:
                 totalSpentSats += prevout.get("value", 0)
 
-        # Calculate net value
         netSatsValue = totalReceivedSats - totalSpentSats
         btcValue = netSatsValue / satBtc
 
@@ -91,23 +88,6 @@ def parseTransactions(newTransactions):
             parsed.append((txid, blockHeight, blockTime, btcValue))
 
     return parsed
-
-#def parseTransactions(newTransactions):
-#    parsed = []
-#    for tx in newTransactions:
-#        txid = tx["txid"]
-#        status = tx.get("status", {})
-#        blockHeight = status.get("block_height")
-#        blockTime = status.get("block_time")
-#        if not blockHeight or not blockTime:
-#            continue
-#        btcValue = sum(
-#            vout["value"]
-#            for vout in tx.get("vout", [])
-#            if vout.get("scriptpubkey_address") == FUND_ADDRESS
-#        ) / 1e8
-#        parsed.append((txid, blockHeight, blockTime, btcValue))
-#    return parsed
 
 
 def insertTransactions(parsedTransactions):
@@ -129,12 +109,12 @@ def getTransactions():
     insertTransactions(parsed)
 
     with sqlite3.connect(TX_STORAGE) as conn:
-        df = pd.read_sql_query("SELECT * FROM transactions ORDER BY blockTime DESC", conn)
-    return df
+        txDf = pd.read_sql_query("SELECT * FROM transactions ORDER BY blockTime DESC", conn)
+    return txDf
 
 
 # -----------------------------
-# HISTORICAL PRICES FUNCTIONS
+# PART 3: FUNCTIONS RELATED TO PRICES
 # -----------------------------
 def getCachedPrice(blockTime):
     with sqlite3.connect(PRICE_STORAGE) as conn:
@@ -179,8 +159,8 @@ def getAllPrices():
     for blockTime in transactionsDf["blockTime"]:
         getHistoricalPrice(blockTime)
     with sqlite3.connect(PRICE_STORAGE) as conn:
-        df = pd.read_sql_query("SELECT * FROM prices ORDER BY blockTime DESC", conn)
-    return df
+        priceDf = pd.read_sql_query("SELECT * FROM prices ORDER BY blockTime DESC", conn)
+    return priceDf
 
 def currentPrice():
     currentPriceResponse = requests.get(LIVE_PRICE_API_URL)

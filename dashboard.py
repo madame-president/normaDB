@@ -31,12 +31,12 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Load environment variables
+# PART 10: LOADING SECRETS
 # -----------------------------
 FUND_ADDRESS = st.secrets["FUND_ADDRESS"]
 
 # -----------------------------
-# CSS for badge
+# PART 11: STYLING FUND BADGE
 # -----------------------------
 st.markdown(
     """
@@ -57,7 +57,7 @@ st.markdown(
 )
 
 # -----------------------------
-# Header container
+# PART 12: HEADER CONTAINER
 # -----------------------------
 with st.container():
     st.markdown("## 🟠 Norma DB")
@@ -66,7 +66,7 @@ with st.container():
     st.code(FUND_ADDRESS, language="text")
 
 # -----------------------------
-# Fund Overview container
+# PART 13: FUND OVERVIEW CONTAINER
 # -----------------------------
 with st.container():
     st.markdown("### Fund Overview")
@@ -92,7 +92,7 @@ with st.container():
     )
 
 # -----------------------------
-# Fund Growth Over Time Container
+# PART 14: GRAPH TO CONTRAST COST VS CURRENT FUND VALUE CONTAINER
 # -----------------------------
 with st.container():
     st.markdown("### Fund Growth Over Time")
@@ -156,7 +156,7 @@ with st.container():
 
 
 # -----------------------------
-# Year 1 Performance Container
+# PART 15: YEAR 1 PERFORMANCE CONTAINER
 # -----------------------------
 with st.container():
     st.markdown("### Year 1 Performance")
@@ -183,7 +183,7 @@ with st.container():
     st.dataframe(y1_data, hide_index=True)
 
 # -----------------------------
-# Fund History Container
+# PART 16: FUND HISTORY CONTAINER
 # -----------------------------
 with st.container():
     st.markdown("### Fund History")
@@ -209,14 +209,14 @@ with st.container():
     )
 
 # -----------------------------
-# About Container
+# PART 17: ABOUT EXPANDER
 # -----------------------------
 with st.expander("About"):
     st.markdown(
         """
 - This is an experimental fund. This is not investment advice.
 - I built this using Python, Streamlit, and [mempool.space](https://mempool.space) as a data provider.
-- I am the most proficient Bitcoin quant in Canada.
+- My work focuses on quantitative analysis of the Bitcoin network.
 - Currently working full-time at Kingston, Ross & Pasnak LLP *(since 2022)*.
 - You can contact me via email [nescobar@krpgroup.com](mailto:nescobar@krpgroup.com)
         """

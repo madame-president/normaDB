@@ -9,14 +9,11 @@ from preparer import (
 )
 
 # -----------------------------
-# FUND INCEPTION & YEAR 1 END DATE
+# PART 8: CALCULATING YEAR 1 END DATE AND TRANSACTIONS WITHIN YEAR 1
 # -----------------------------
 fundInceptionDate = datetime.utcfromtimestamp(oldestBlockTime)
 y1endDate = fundInceptionDate + timedelta(days=365)
 
-# -----------------------------
-# PREPARE DATA FOR YEAR 1
-# -----------------------------
 # Convert blockTime to datetime
 preparedDf["blockDatetime"] = pd.to_datetime(preparedDf["blockTime"], unit="s")
 
@@ -24,10 +21,10 @@ preparedDf["blockDatetime"] = pd.to_datetime(preparedDf["blockTime"], unit="s")
 y1Df = preparedDf[preparedDf["blockDatetime"] <= y1endDate]
 
 # -----------------------------
-# YEAR 1 METRICS
+# PART 9: CALCULATING YEAR 1 METRICS
 # -----------------------------
 y1bitcoinHeld = y1Df["btcValue"].sum()
-y1closingPrice = 120548  # fixed price: must be added manually for every year
+y1closingPrice = 120548  # fixed: must be added manually every year (use price as of 23:59:59 on yX end date)
 y1closingFundValue = y1bitcoinHeld * y1closingPrice
 y1closingFundCost = y1Df["costCAD"].sum()
 y1annualReturn = ((y1closingFundValue - y1closingFundCost) / y1closingFundCost) * 100 if y1closingFundCost != 0 else 0

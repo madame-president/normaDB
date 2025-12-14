@@ -9,7 +9,7 @@ from loader import (
 )
 
 # -----------------------------
-# GET DATA
+# PART 4: CALLING FUNCTIONS TO PREPARE DATA
 # -----------------------------
 transactionsDf = getTransactions()
 pricesDf = getAllPrices()
@@ -20,19 +20,19 @@ preparedDf["costCAD"] = preparedDf["btcValue"] * preparedDf["priceCAD"]
 preparedDf = preparedDf.sort_values("blockTime", ascending=False)  # newest first
 
 # -----------------------------
-# LIVE PRICE
+# PART 5: CALLING FUNCTION TO GET LIVE PRICE
 # -----------------------------
 liveBitcoinPrice = currentPrice()
 
 # -----------------------------
-# AGGREGATED CALCULATIONS
+# PART 6: AGGREGATING TOTAL BITCOIN HELD, TOTAL COST, AND CURRENT FUND VALUE
 # -----------------------------
 totalBitcoinHeld = preparedDf["btcValue"].sum()
 totalFiatCost = preparedDf["costCAD"].sum()
 currentFundValue = totalBitcoinHeld * liveBitcoinPrice
 
 # -----------------------------
-# NEW METRICS
+# PART 7: CALCULATING FUND INCEPTION, FUND AGE, AND FUND PNL
 # -----------------------------
 # Fund inception = oldest transaction
 oldestBlockTime = preparedDf["blockTime"].min()
